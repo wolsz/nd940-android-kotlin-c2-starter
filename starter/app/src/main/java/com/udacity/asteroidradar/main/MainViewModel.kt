@@ -1,40 +1,52 @@
 package com.udacity.asteroidradar.main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.Network.AstroidApi
+import com.udacity.asteroidradar.Network.AsteroidApi
+import com.udacity.asteroidradar.Network.PictureApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
+import com.udacity.asteroidradar.api.todaysDate
+import kotlinx.coroutines.launch
 import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainViewModel : ViewModel() {
 
-    private val _response = MutableLiveData<String>()
+    private val _status = MutableLiveData<String>()
 
-    val response: LiveData<String>
-    get() = _response
+    val status: LiveData<String>
+    get() = _status
 
     init {
         getAsteroids()
+        getPictureOfTheDay()
+    }
+
+    private fun getPictureOfTheDay() {
+        viewModelScope.launch {
+            try {
+                val pictureOfTheDay = PictureApi.retrofitService.getPictureOfTheDay()
+                _status.value = "Success: Image retrieved ${pictureOfTheDay.url}"
+            } catch (e: Exception) {
+                _status.value = "Failure: ${e.message}"
+            }
+        }
     }
 
     private fun getAsteroids() {
-        AstroidApi.retrofitService.getAstroidProperties("2021-01-12", "2021-01-12").enqueue(object: Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-//                val asteriods: ArrayList<Asteroid> = parseAsteroidsJsonResult(JSONObject(response.body()!!))
-                _response.value = "Success: Asteroids retrieved"
-                response.body()?.let { Log.i("MAINVIEW MODEL", it) }
+        val today = todaysDate()
+        viewModelScope.launch {
+            try {
+               val resultString = AsteroidApi.retrofitService.getAstroidProperties(today, today)
+                val asteroids: ArrayList<Asteroid> = parseAsteroidsJsonResult(JSONObject(resultString))
+                _status.value = "Success: Asteroids retrieved ${asteroids.size}"
+            } catch (e: Exception) {
+                _status.value = "Failure: ${e.message}"
             }
 
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                _response.value = "Failure: " + t.message
-            }
+        }
 
-        })
     }
 }
