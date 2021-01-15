@@ -1,6 +1,5 @@
 package com.udacity.asteroidradar.main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,11 +13,13 @@ import com.udacity.asteroidradar.api.todaysDate
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
+enum class AsteroidApiStatus {LOADING, DONE, ERROR}
+
 class MainViewModel : ViewModel() {
 
-    private val _status = MutableLiveData<String>()
+    private val _status = MutableLiveData<AsteroidApiStatus>()
 
-    val status: LiveData<String>
+    val status: LiveData<AsteroidApiStatus>
         get() = _status
 
     private val _asteroids = MutableLiveData<List<Asteroid>>()
@@ -39,9 +40,8 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _pictureOfTheDay.value = PictureApi.retrofitService.getPictureOfTheDay()
-                _status.value = "Success: Image retrieved ${_pictureOfTheDay.value!!.mediaType}"
             } catch (e: Exception) {
-                _status.value = "Failure: ${e.message}"
+//                _status.value = "Failure: ${e.message}"
             }
         }
     }
@@ -50,14 +50,14 @@ class MainViewModel : ViewModel() {
         val today = todaysDate()
         viewModelScope.launch {
             try {
+                _status.value = AsteroidApiStatus.LOADING
                 val resultString = AsteroidApi.retrofitService.getAstroidProperties(today, today)
                 _asteroids.value =
                     parseAsteroidsJsonResult(JSONObject(resultString))
-                Log.i("AAA", "${_asteroids.value}")
-                Log.i("AAA", "${asteroids.value}")
-                _status.value = "Success: Asteroids retrieved ${asteroids.value?.size}"
+                _status.value = AsteroidApiStatus.DONE
             } catch (e: Exception) {
-                _status.value = "Failure: ${e.message}"
+                _status.value = AsteroidApiStatus.ERROR
+                _asteroids.value = ArrayList()
             }
 
         }
