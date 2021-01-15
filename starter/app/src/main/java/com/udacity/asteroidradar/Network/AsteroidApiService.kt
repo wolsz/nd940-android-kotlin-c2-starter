@@ -17,7 +17,7 @@ private val moshi = Moshi.Builder()
     .build()
 
 private val retrofitImageOfTheDay = Retrofit.Builder()
-    .addConverterFactory(MoshiConverterFactory.create())
+    .addConverterFactory(MoshiConverterFactory.create(moshi))
     .baseUrl(Constants.BASE_URL)
     .build()
 
