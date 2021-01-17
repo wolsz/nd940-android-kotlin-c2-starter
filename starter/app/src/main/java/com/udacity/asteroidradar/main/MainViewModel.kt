@@ -13,7 +13,7 @@ import com.udacity.asteroidradar.api.todaysDate
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-enum class AsteroidApiStatus {LOADING, DONE, ERROR}
+enum class AsteroidApiStatus { LOADING, DONE, ERROR }
 
 class MainViewModel : ViewModel() {
 
@@ -29,6 +29,11 @@ class MainViewModel : ViewModel() {
     private val _pictureOfTheDay = MutableLiveData<PictureOfDay>()
     val pictureOfTheDay: LiveData<PictureOfDay>
         get() = _pictureOfTheDay
+
+
+    private val _navigateToSelectedAndroid = MutableLiveData<Asteroid>()
+    val navigateToSelectedAndroid: LiveData<Asteroid>
+        get() = _navigateToSelectedAndroid
 
 
     init {
@@ -62,5 +67,13 @@ class MainViewModel : ViewModel() {
 
         }
 
+    }
+
+    fun displayAsteroidDetails(asteroid: Asteroid) {
+        _navigateToSelectedAndroid.value = asteroid
+    }
+
+    fun displayAndroidDetailsComplete() {
+        _navigateToSelectedAndroid.value = null
     }
 }
