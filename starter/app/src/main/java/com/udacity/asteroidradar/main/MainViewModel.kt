@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.udacity.asteroidradar.Asteroid
+import com.udacity.asteroidradar.database.Asteroid
 import com.udacity.asteroidradar.Network.AsteroidApi
 import com.udacity.asteroidradar.Network.PictureApi
 import com.udacity.asteroidradar.PictureOfDay
