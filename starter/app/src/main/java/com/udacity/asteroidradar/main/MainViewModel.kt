@@ -1,5 +1,6 @@
 package com.udacity.asteroidradar.main
 
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +16,7 @@ import org.json.JSONObject
 
 enum class AsteroidApiStatus { LOADING, DONE, ERROR }
 
-class MainViewModel : ViewModel() {
+class MainViewModel(app: Application) : ViewModel() {
 
     private val _status = MutableLiveData<AsteroidApiStatus>()
 
@@ -56,7 +57,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _status.value = AsteroidApiStatus.LOADING
-                val resultString = AsteroidApi.retrofitService.getAstroidProperties(today, today)
+                val resultString = AsteroidApi.retrofitService.getAsteroidProperties(today, today)
                 _asteroids.value =
                     parseAsteroidsJsonResult(JSONObject(resultString))
                 _status.value = AsteroidApiStatus.DONE

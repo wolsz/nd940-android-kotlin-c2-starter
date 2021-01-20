@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
+import com.udacity.asteroidradar.detail.DetailViewModelFactory
 
 class MainFragment : Fragment() {
 
@@ -17,8 +18,11 @@ class MainFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        val application = requireNotNull(activity).application
         val binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
+
+        val viewModelFactory = MainViewModelFactory(application)
 
         binding.viewModel = viewModel
 

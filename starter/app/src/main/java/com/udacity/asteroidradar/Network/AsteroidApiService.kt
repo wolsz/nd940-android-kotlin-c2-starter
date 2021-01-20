@@ -44,7 +44,7 @@ object PictureApi {
 
 interface AsteroidApiService {
     @GET("neo/rest/v1/feed")
-    suspend fun getAstroidProperties(
+    suspend fun getAsteroidProperties(
         @Query("start_date") start_date: String,
         @Query("end_date") end_date: String,
         @Query("api_key") api_key: String = Constants.API_KEY
