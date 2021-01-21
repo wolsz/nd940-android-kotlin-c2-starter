@@ -15,5 +15,7 @@ interface AsteroidDatabaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg asteroids: Asteroid)
 
+    @Query("select codename from asteroids_table")
+    fun getCodename(): LiveData<List<String>>
 
 }
