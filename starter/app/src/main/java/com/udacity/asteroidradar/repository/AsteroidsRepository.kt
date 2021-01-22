@@ -16,17 +16,13 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
 
 //    val asteroids: LiveData<List<Asteroid>> = Transformations.map(database.asteroidDao.getAsteroids()) {
 //        it
-    val asteroids: LiveData<List<Asteroid>> = database.asteroidDao.getAsteroids()
+    val asteroidsData: LiveData<List<Asteroid>> = database.asteroidDao.getAsteroids()
 //    }
 
     val codes: LiveData<List<String>> = database.asteroidDao.getCodename()
 
-    fun getAnd(): LiveData<List<Asteroid>> {
-        return database.asteroidDao.getAsteroids()
-    }
-
      suspend fun getNewAsteroids() {
-        val today = todaysDate()
+//        val today = todaysDate()
 
         withContext(Dispatchers.IO) {
             val today = todaysDate()

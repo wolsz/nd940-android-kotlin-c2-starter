@@ -12,7 +12,7 @@ import com.udacity.asteroidradar.Network.PictureApi
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.api.todaysDate
-import com.udacity.asteroidradar.database.getDatabase
+import com.udacity.asteroidradar.database.AsteroidsDatabase
 import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,17 +40,18 @@ class MainViewModel(app: Application) : ViewModel() {
     val navigateToSelectedAndroid: LiveData<Asteroid>
         get() = _navigateToSelectedAndroid
 
-    private val database = getDatabase(app)
+    private val database = AsteroidsDatabase.getDatabase(app)
     private val asteroidsRepository = AsteroidsRepository(database)
 
 
+    val and = asteroidsRepository.asteroidsData
     init {
         viewModelScope.launch {
             asteroidsRepository.getNewAsteroids()
         }
+        _asteroids.value = and.value
         getAsteroids()
         getPictureOfTheDay()
-        Log.i("AAA", "${asteroidsRepository.getAnd().value}")
     }
 
 
@@ -75,9 +76,9 @@ class MainViewModel(app: Application) : ViewModel() {
             try {
                 _status.value = AsteroidApiStatus.LOADING
                 val resultString = AsteroidApi.retrofitService.getAsteroidProperties(today, today)
-                _asteroids.value =
-                    parseAsteroidsJsonResult(JSONObject(resultString))
-
+//                _asteroids.value = parseAsteroidsJsonResult(JSONObject(resultString))
+                val asteroidsD: LiveData<List<Asteroid>> = database.asteroidDao.getAsteroids()
+                _asteroids.value = asteroidsD.value
                 _status.value = AsteroidApiStatus.DONE
             } catch (e: Exception) {
                 _status.value = AsteroidApiStatus.ERROR
@@ -85,10 +86,7 @@ class MainViewModel(app: Application) : ViewModel() {
             }
 
         }
-        val ast = asteroidsRepository.getAnd()
-        Log.i("AAA", "${ast.value}")
-
-    }
+     }
 
     fun displayAsteroidDetails(asteroid: Asteroid) {
         _navigateToSelectedAndroid.value = asteroid
