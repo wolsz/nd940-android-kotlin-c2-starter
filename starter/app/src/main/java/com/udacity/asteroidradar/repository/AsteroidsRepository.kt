@@ -19,10 +19,15 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
     val asteroidsData: LiveData<List<Asteroid>> = database.asteroidDao.getAsteroids()
 //    }
 
+    suspend fun getAllAsteroids(): List<Asteroid> {
+        return withContext(Dispatchers.IO) {
+            database.asteroidDao.getAllAsteroids()
+        }
+    }
+
     val codes: LiveData<List<String>> = database.asteroidDao.getCodename()
 
      suspend fun getNewAsteroids() {
-//        val today = todaysDate()
 
         withContext(Dispatchers.IO) {
             val today = todaysDate()

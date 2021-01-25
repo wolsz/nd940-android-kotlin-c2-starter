@@ -1,7 +1,6 @@
 package com.udacity.asteroidradar.main
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,13 +9,10 @@ import com.udacity.asteroidradar.database.Asteroid
 import com.udacity.asteroidradar.Network.AsteroidApi
 import com.udacity.asteroidradar.Network.PictureApi
 import com.udacity.asteroidradar.PictureOfDay
-import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.api.todaysDate
 import com.udacity.asteroidradar.database.AsteroidsDatabase
 import com.udacity.asteroidradar.repository.AsteroidsRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 enum class AsteroidApiStatus { LOADING, DONE, ERROR }
 
@@ -49,15 +45,18 @@ class MainViewModel(app: Application) : ViewModel() {
         viewModelScope.launch {
             asteroidsRepository.getNewAsteroids()
         }
-        _asteroids.value = and.value
-        getAsteroids()
+
+        displayAsteroids()
         getPictureOfTheDay()
+        getAllAsteroids()
     }
 
 
-//    val ast = asteroidsRepository.asteroids
-//    val code = asteroidsRepository.codes
-
+    private fun getAllAsteroids() {
+        viewModelScope.launch {
+            _asteroids.value = asteroidsRepository.getAllAsteroids()
+        }
+    }
 
     private fun getPictureOfTheDay() {
         viewModelScope.launch {
@@ -69,7 +68,7 @@ class MainViewModel(app: Application) : ViewModel() {
         }
     }
 
-    private fun getAsteroids() {
+    private fun displayAsteroids() {
         val today = todaysDate()
 
         viewModelScope.launch {
@@ -77,8 +76,8 @@ class MainViewModel(app: Application) : ViewModel() {
                 _status.value = AsteroidApiStatus.LOADING
                 val resultString = AsteroidApi.retrofitService.getAsteroidProperties(today, today)
 //                _asteroids.value = parseAsteroidsJsonResult(JSONObject(resultString))
-                val asteroidsD: LiveData<List<Asteroid>> = database.asteroidDao.getAsteroids()
-                _asteroids.value = asteroidsD.value
+//                val asteroidsD: LiveData<List<Asteroid>> = database.asteroidDao.getAsteroids()
+//                _asteroids.value = asteroidsD.value
                 _status.value = AsteroidApiStatus.DONE
             } catch (e: Exception) {
                 _status.value = AsteroidApiStatus.ERROR
