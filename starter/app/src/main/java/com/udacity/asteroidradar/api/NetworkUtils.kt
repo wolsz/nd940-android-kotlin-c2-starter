@@ -61,3 +61,7 @@ fun todaysDate(): String {
     val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
     return dateFormat.format(currentTime)
 }
+
+fun getWeek(): ArrayList<String> {
+    return getNextSevenDaysFormattedDates()
+}

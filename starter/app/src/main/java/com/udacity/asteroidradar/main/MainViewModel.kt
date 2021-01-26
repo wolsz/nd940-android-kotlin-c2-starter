@@ -15,6 +15,7 @@ import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 
 enum class AsteroidApiStatus { LOADING, DONE, ERROR }
+enum class Selection { TODAY, NEXT7DAYS, ALLSTORED}
 
 class MainViewModel(app: Application) : ViewModel() {
 
@@ -46,17 +47,37 @@ class MainViewModel(app: Application) : ViewModel() {
             asteroidsRepository.getNewAsteroids()
         }
 
-        displayAsteroids()
+        displayAsteroids(Selection.ALLSTORED)
         getPictureOfTheDay()
-        getAllAsteroids()
+//        getAllAsteroids()
     }
 
 
-    private fun getAllAsteroids() {
-        viewModelScope.launch {
-            _asteroids.value = asteroidsRepository.getAllAsteroids()
-        }
-    }
+//    fun getAllAsteroids() {
+//        viewModelScope.launch {
+//            try {
+//                _status.value = AsteroidApiStatus.LOADING
+//                _asteroids.value = asteroidsRepository.getAllAsteroids()
+//                _status.value = AsteroidApiStatus.LOADING
+//            }  catch (e: Exception) {
+//                _status.value = AsteroidApiStatus.ERROR
+//                _asteroids.value = ArrayList()
+//            }
+//
+//        }
+//    }
+//
+//    fun getTodayAsteroids() {
+//        viewModelScope.launch {
+//            _asteroids.value = asteroidsRepository.getTodaysAsteroids()
+//        }
+//    }
+//
+//    fun getNextWeeksAsteroids() {
+//        viewModelScope.launch {
+//            _asteroids.value = asteroidsRepository.getNextWeekAsteroids()
+//        }
+//    }
 
     private fun getPictureOfTheDay() {
         viewModelScope.launch {
@@ -68,16 +89,18 @@ class MainViewModel(app: Application) : ViewModel() {
         }
     }
 
-    private fun displayAsteroids() {
+    fun displayAsteroids(asteroidSet: Selection) {
         val today = todaysDate()
 
         viewModelScope.launch {
             try {
                 _status.value = AsteroidApiStatus.LOADING
-                val resultString = AsteroidApi.retrofitService.getAsteroidProperties(today, today)
-//                _asteroids.value = parseAsteroidsJsonResult(JSONObject(resultString))
-//                val asteroidsD: LiveData<List<Asteroid>> = database.asteroidDao.getAsteroids()
-//                _asteroids.value = asteroidsD.value
+                when (asteroidSet) {
+                    Selection.ALLSTORED -> _asteroids.value = asteroidsRepository.getAllAsteroids()
+                    Selection.NEXT7DAYS -> _asteroids.value = asteroidsRepository.getNextWeekAsteroids()
+                    Selection.TODAY -> _asteroids.value = asteroidsRepository.getTodaysAsteroids()
+                }
+
                 _status.value = AsteroidApiStatus.DONE
             } catch (e: Exception) {
                 _status.value = AsteroidApiStatus.ERROR
