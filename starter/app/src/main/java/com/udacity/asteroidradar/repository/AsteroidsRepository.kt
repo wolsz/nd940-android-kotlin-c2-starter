@@ -31,7 +31,7 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
 
         withContext(Dispatchers.IO) {
             val today = todaysDate()
-            val resultString = AsteroidApi.retrofitService.getAsteroidProperties(today, today)
+            val resultString = AsteroidApi.retrofitService.getAsteroidProperties(today)
             val asteroids = parseAsteroidsJsonResult(JSONObject(resultString))
             val asteroidsArray = asteroids.toTypedArray()
             database.asteroidDao.insertAll(*asteroidsArray)
