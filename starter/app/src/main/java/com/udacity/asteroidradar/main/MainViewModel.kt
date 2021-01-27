@@ -1,6 +1,9 @@
 package com.udacity.asteroidradar.main
 
 import android.app.Application
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +18,7 @@ import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 
 enum class AsteroidApiStatus { LOADING, DONE, ERROR }
-enum class Selection { TODAY, NEXT7DAYS, ALLSTORED}
+enum class Selection { TODAY, NEXT7DAYS, ALLSTORED }
 
 class MainViewModel(app: Application) : ViewModel() {
 
@@ -37,47 +40,21 @@ class MainViewModel(app: Application) : ViewModel() {
     val navigateToSelectedAndroid: LiveData<Asteroid>
         get() = _navigateToSelectedAndroid
 
+    private val _populateDatabase = MutableLiveData<Boolean>()
+    val populateDatabase: LiveData<Boolean>
+        get() = _populateDatabase
+
     private val database = AsteroidsDatabase.getDatabase(app)
     private val asteroidsRepository = AsteroidsRepository(database)
 
 
     val and = asteroidsRepository.asteroidsData
-    init {
-        viewModelScope.launch {
-            asteroidsRepository.getNewAsteroids()
-        }
 
+    init {
         displayAsteroids(Selection.ALLSTORED)
         getPictureOfTheDay()
-//        getAllAsteroids()
     }
 
-
-//    fun getAllAsteroids() {
-//        viewModelScope.launch {
-//            try {
-//                _status.value = AsteroidApiStatus.LOADING
-//                _asteroids.value = asteroidsRepository.getAllAsteroids()
-//                _status.value = AsteroidApiStatus.LOADING
-//            }  catch (e: Exception) {
-//                _status.value = AsteroidApiStatus.ERROR
-//                _asteroids.value = ArrayList()
-//            }
-//
-//        }
-//    }
-//
-//    fun getTodayAsteroids() {
-//        viewModelScope.launch {
-//            _asteroids.value = asteroidsRepository.getTodaysAsteroids()
-//        }
-//    }
-//
-//    fun getNextWeeksAsteroids() {
-//        viewModelScope.launch {
-//            _asteroids.value = asteroidsRepository.getNextWeekAsteroids()
-//        }
-//    }
 
     private fun getPictureOfTheDay() {
         viewModelScope.launch {
@@ -90,14 +67,20 @@ class MainViewModel(app: Application) : ViewModel() {
     }
 
     fun displayAsteroids(asteroidSet: Selection) {
-        val today = todaysDate()
 
         viewModelScope.launch {
             try {
                 _status.value = AsteroidApiStatus.LOADING
+                _populateDatabase.value = false
                 when (asteroidSet) {
-                    Selection.ALLSTORED -> _asteroids.value = asteroidsRepository.getAllAsteroids()
-                    Selection.NEXT7DAYS -> _asteroids.value = asteroidsRepository.getNextWeekAsteroids()
+                    Selection.ALLSTORED -> {
+                        _asteroids.value = asteroidsRepository.getAllAsteroids()
+                        if (_asteroids.value.isNullOrEmpty()) {
+                            _populateDatabase.value = true
+                        }
+                    }
+                    Selection.NEXT7DAYS -> _asteroids.value =
+                        asteroidsRepository.getNextWeekAsteroids()
                     Selection.TODAY -> _asteroids.value = asteroidsRepository.getTodaysAsteroids()
                 }
 
@@ -108,7 +91,15 @@ class MainViewModel(app: Application) : ViewModel() {
             }
 
         }
-     }
+    }
+
+    fun populateDatabase(context: Context) {
+        viewModelScope.launch {
+            asteroidsRepository.getNewAsteroids()
+            displayAsteroids(Selection.ALLSTORED)
+        }
+
+    }
 
     fun displayAsteroidDetails(asteroid: Asteroid) {
         _navigateToSelectedAndroid.value = asteroid

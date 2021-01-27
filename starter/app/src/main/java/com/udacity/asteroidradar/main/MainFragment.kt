@@ -2,6 +2,7 @@ package com.udacity.asteroidradar.main
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -37,6 +38,13 @@ class MainFragment : Fragment() {
                 viewModel.displayAndroidDetailsComplete()
             }
         })
+
+        viewModel.populateDatabase.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                alertEmptyDatabaseDialog()
+            }
+        })
+
         setHasOptionsMenu(true)
 
         return binding.root
@@ -60,5 +68,17 @@ class MainFragment : Fragment() {
             }
         }
         return true
+    }
+
+    private fun alertEmptyDatabaseDialog() {
+        val builder = AlertDialog.Builder(requireActivity())
+            .setTitle(getString(R.string.populate_database_caption))
+            .setMessage(getString(R.string.populate_database_button))
+            .setPositiveButton(android.R.string.ok) { _, _ ->context?.let {
+                    viewModel.populateDatabase(it)
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+        builder.create().show()
     }
 }
