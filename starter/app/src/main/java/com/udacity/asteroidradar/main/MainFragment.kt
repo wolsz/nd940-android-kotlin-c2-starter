@@ -75,7 +75,7 @@ class MainFragment : Fragment() {
             .setTitle(getString(R.string.populate_database_caption))
             .setMessage(getString(R.string.populate_database_button))
             .setPositiveButton(android.R.string.ok) { _, _ ->context?.let {
-                    viewModel.populateDatabase(it)
+                    viewModel.populateDatabase()
                 }
             }
             .setNegativeButton(android.R.string.cancel, null)

@@ -2,17 +2,13 @@ package com.udacity.asteroidradar.main
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.udacity.asteroidradar.database.Asteroid
-import com.udacity.asteroidradar.Network.AsteroidApi
 import com.udacity.asteroidradar.Network.PictureApi
 import com.udacity.asteroidradar.PictureOfDay
-import com.udacity.asteroidradar.api.todaysDate
+import com.udacity.asteroidradar.database.Asteroid
 import com.udacity.asteroidradar.database.AsteroidsDatabase
 import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
@@ -47,8 +43,6 @@ class MainViewModel(app: Application) : ViewModel() {
     private val database = AsteroidsDatabase.getDatabase(app)
     private val asteroidsRepository = AsteroidsRepository(database)
 
-
-    val and = asteroidsRepository.asteroidsData
 
     init {
         displayAsteroids(Selection.ALLSTORED)
@@ -93,7 +87,7 @@ class MainViewModel(app: Application) : ViewModel() {
         }
     }
 
-    fun populateDatabase(context: Context) {
+    fun populateDatabase() {
         viewModelScope.launch {
             asteroidsRepository.getNewAsteroids()
             displayAsteroids(Selection.ALLSTORED)

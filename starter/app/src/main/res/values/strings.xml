@@ -22,4 +22,10 @@
     <string name="danger_indicator">Danger indicator</string>
     <string name="populate_database_button">There are currently no asteroid information in the database. You can populate in now by connecting to the internet and clicking OK. Note: The database is updated automatically on a daily basis.</string>
     <string name="populate_database_caption">Asteroids Database Empty</string>
+    <string name="help_button_to_get_help">Help button to get help on what astronomical unit means</string>
+    <string name="the_close_approach_date">The close approach date</string>
+    <string name="the_absolute_magnitude">The absolute magnitude</string>
+    <string name="the_estimated_diameter">The estimated diameter</string>
+    <string name="the_relative_velocity">The relative velocity</string>
+    <string name="the_distance_from_earth">The distance from earth</string>
 </resources>

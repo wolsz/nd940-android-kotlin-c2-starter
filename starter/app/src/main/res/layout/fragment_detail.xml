@@ -55,6 +55,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:contentDescription="@string/the_close_approach_date"
                         android:text="@{viewModel.selectedAsteroid.closeApproachDate}"
                         android:textColor="@color/default_text_color"
                         tools:text="2020-02-01" />
@@ -84,6 +85,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
+                            android:contentDescription="@string/the_absolute_magnitude"
                             android:textColor="@color/default_text_color"
                             app:astronomicalUnitText="@{viewModel.selectedAsteroid.absoluteMagnitude}"
                             tools:text="25.126 au" />
@@ -93,6 +95,7 @@
                         android:id="@+id/help_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:contentDescription="@string/help_button_to_get_help"
                         android:padding="16dp"
                         app:srcCompat="@drawable/ic_help_circle" />
 
@@ -110,6 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:contentDescription="@string/the_estimated_diameter"
                     android:textColor="@color/default_text_color"
                     app:kmUnitText="@{viewModel.selectedAsteroid.estimatedDiameter}"
                     tools:text="0.82 km" />
@@ -126,6 +130,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:contentDescription="@string/the_relative_velocity"
                     android:textColor="@color/default_text_color"
                     app:velocityText="@{viewModel.selectedAsteroid.relativeVelocity}"
                     tools:text="11.9 km/s" />
@@ -142,6 +147,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:contentDescription="@string/the_distance_from_earth"
                     android:textColor="@color/default_text_color"
                     app:astronomicalUnitText="@{viewModel.selectedAsteroid.distanceFromEarth}"
                     tools:text="0.0924 au" />
